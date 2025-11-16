@@ -1,4 +1,5 @@
 import { FileUploadInput } from "@/components/file-upload-input";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import {
@@ -24,46 +25,54 @@ export const Route = createFileRoute("/add/")({
 
 function RouteComponent() {
   return (
-    <Card>
-      <CardHeader>
-        <h1>
-          <PackagePlus />
-          Add New APK
-        </h1>
-      </CardHeader>
-      <CardContent>
-        <FieldGroup>
-          <Field>
-            <FieldLabel>
-              <DownloadIcon />
-              APK Source
-            </FieldLabel>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a Source for your APK" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="upload-apk">Upload APK</SelectItem>
-                  <SelectItem value="apkpure" disabled>
-                    APKPure
-                  </SelectItem>
-                  <SelectItem value="download-from-url" disabled>
-                    Donwload from URL
-                  </SelectItem>
-                  <SelectItem value="google-play" disabled>
-                    Google Play Store
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field>
-            <FieldLabel>Upload Your APK File</FieldLabel>
-            <FileUploadInput />
-          </Field>
-        </FieldGroup>
-      </CardContent>
-    </Card>
+    <div className="container mx-auto px-4 py-8">
+      <Card className="mx-auto max-w-3xl w-full">
+        <CardHeader>
+          <h1>
+            <PackagePlus />
+            Add New APK
+          </h1>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup className="mb-10">
+            <Field>
+              <FieldLabel>
+                <DownloadIcon />
+                APK Source
+              </FieldLabel>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a Source for your APK" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="upload-apk">Upload APK</SelectItem>
+                    <SelectItem value="apkpure" disabled>
+                      APKPure
+                    </SelectItem>
+                    <SelectItem value="download-from-url" disabled>
+                      Donwload from URL
+                    </SelectItem>
+                    <SelectItem value="google-play" disabled>
+                      Google Play Store
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <FieldLabel>Upload Your APK File</FieldLabel>
+              <FileUploadInput
+                accepts=".apk,.xapk,.apks"
+                defaultItemIcon={
+                  <img src="/icons/android.svg" alt="android icon" />
+                }
+              />
+            </Field>
+          </FieldGroup>
+          <Button className="w-full">Upload</Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

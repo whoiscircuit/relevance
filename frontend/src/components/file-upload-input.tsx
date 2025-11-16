@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
-import { Cloud, CloudUploadIcon, X } from "lucide-react";
+import { Cloud, CloudUploadIcon, ImageIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Card, CardContent, CardFooter } from "./ui/card";
+import { Button } from "./ui/button";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -17,9 +19,9 @@ interface FileUploadInputProps {
 export function FileUploadInput({
   value: controlledValue,
   onChange,
-  multiple = true,
+  multiple = false,
   accepts = "*",
-  defaultItemIcon,
+  defaultItemIcon = <ImageIcon color="gray" />,
 }: FileUploadInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragActive, setIsDragActive] = React.useState(false);
@@ -118,12 +120,11 @@ export function FileUploadInput({
         {value.length > 0 && (
           <div className="mt-6 flex gap-4 overflow-x-auto pb-2">
             {value.map((file, index) => (
-              <div
+              <Card
                 key={`${file.name}-${index}`}
-                className="flex-shrink-0 w-24 bg-white border border-gray-200 rounded-lg overflow-hidden"
+                className="shrink-0 w-30 gap-0 bg-white border border-gray-200 rounded-lg overflow-hidden p-0 cursor-default"
               >
-                {/* Preview */}
-                <div className="relative w-full h-24 bg-gray-100 flex items-center justify-center">
+                <CardContent className="relative w-full h-30 bg-gray-100 flex items-center justify-center">
                   {file.preview ? (
                     <img
                       src={file.preview}
@@ -137,22 +138,20 @@ export function FileUploadInput({
                   ) : (
                     <span className="text-xs text-gray-500">No preview</span>
                   )}
-
-                  {/* Delete Button */}
-                  <button
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
                     onClick={() => removeFile(index)}
-                    className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white p-1 rounded transition-colors"
+                    className="absolute top-1 right-1 p-1 rounded transition-colors cursor-pointer"
                   >
                     <X className="w-3 h-3" />
-                  </button>
-                </div>
-
-                {/* File Name */}
-                <div className="p-2 text-xs font-medium text-gray-700 truncate text-center">
-                  {file.name.substring(0, 12)}
-                  {file.name.length > 12 ? "..." : ""}
-                </div>
-              </div>
+                  </Button>
+                </CardContent>
+                <CardFooter className="p-2 text-xs font-medium text-gray-700 truncate text-center">
+                  {file.name.substring(0, 18)}
+                  {file.name.length > 18 ? "..." : ""}
+                </CardFooter>
+              </Card>
             ))}
           </div>
         )}
