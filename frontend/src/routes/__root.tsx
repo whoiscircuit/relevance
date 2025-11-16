@@ -1,12 +1,16 @@
-import * as React from 'react';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import { Outlet, createRootRoute } from '@tanstack/react-router';
+import * as React from "react";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { ThemeProvider } from "@/components/theme-provider";
+import "../index.css";
 
 export const Route = createRootRoute({
   component: () => (
     <>
-      <Outlet />
-      <TanStackRouterDevtools />
+      <ThemeProvider>
+        <Outlet />
+        <TanStackRouterDevtools />
+      </ThemeProvider>
     </>
   ),
 });
