@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { Cloud, CloudUploadIcon, ImageIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardFooter } from "./ui/card";
-import { Button } from "./ui/button";
+import { Card, CardContent, CardFooter } from "./card";
+import { Button } from "./button";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -87,7 +87,7 @@ export function FileUploadInput({
         onDragOver={handleDrag}
         onDrop={handleDrop}
         className={cn(
-          "relative border-2 border-dashed rounded-lg p-8 transition-all duration-200 cursor-pointer",
+          "relative border-2 border-dashed rounded-lg px-8 py-4 transition-all duration-200 cursor-pointer",
           isDragActive
             ? "border-blue-500 bg-blue-50"
             : "border-gray-300 hover:border-gray-400 hover:bg-gray-50",

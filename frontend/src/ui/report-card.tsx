@@ -1,14 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/ui/card";
+import { Progress } from "@/ui/progress";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/ui/accordion";
 import {
   CheckCircle2,
   AlertCircle,
@@ -140,13 +146,19 @@ function ReportStep({ step }: { step: ReportStep }) {
 interface ReportCardProps {
   title: string;
   steps: ReportStep[];
+  description?: string;
 }
 
-export default function ReportCard({ title, steps }: ReportCardProps) {
+export default function ReportCard({
+  title,
+  steps,
+  description,
+}: ReportCardProps) {
   return (
     <Card className="w-full max-w-3xl">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent className="p-0">
         <Accordion

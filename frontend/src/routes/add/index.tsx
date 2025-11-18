@@ -1,8 +1,8 @@
-import { FileUploadInput } from "@/components/file-upload-input";
-import ReportCard from "@/components/report-card";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { FileUploadInput } from "@/ui/file-upload-input";
+import ReportCard from "@/ui/report-card";
+import { Button } from "@/ui/button";
+import { Card, CardContent, CardHeader } from "@/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@/ui/field";
 import {
   Select,
   SelectGroup,
@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
   SelectContent,
-} from "@/components/ui/select";
+} from "@/ui/select";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   CloudUploadIcon,
@@ -19,6 +19,8 @@ import {
   PackageIcon,
   PackagePlus,
 } from "lucide-react";
+import Container from "@/ui/container";
+import SourceSelectorCard from "@/features/appBuilder/components/source-selector-card";
 
 export const Route = createFileRoute("/add/")({
   component: RouteComponent,
@@ -79,55 +81,8 @@ Security scan canceled`,
 
 function RouteComponent() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <ReportCard steps={REPORT_STEPS} title="Report Card" />
-      {/* <Card className="mx-auto max-w-3xl w-full">
-        <CardHeader>
-          <h1>
-            <PackagePlus />
-            Add New APK
-          </h1>
-        </CardHeader>
-        <CardContent>
-          <FieldGroup className="mb-10">
-            <Field>
-              <FieldLabel>
-                <DownloadIcon />
-                APK Source
-              </FieldLabel>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a Source for your APK" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="upload-apk">Upload APK</SelectItem>
-                    <SelectItem value="apkpure" disabled>
-                      APKPure
-                    </SelectItem>
-                    <SelectItem value="download-from-url" disabled>
-                      Donwload from URL
-                    </SelectItem>
-                    <SelectItem value="google-play" disabled>
-                      Google Play Store
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <FieldLabel>Upload Your APK File</FieldLabel>
-              <FileUploadInput
-                accepts=".apk,.xapk,.apks"
-                defaultItemIcon={
-                  <img src="/icons/android.svg" alt="android icon" />
-                }
-              />
-            </Field>
-          </FieldGroup>
-          <Button className="w-full">Upload</Button>
-        </CardContent>
-      </Card> */}
-    </div>
+    <Container>
+      <SourceSelectorCard />
+    </Container>
   );
 }
