@@ -11,8 +11,17 @@ import {
 import { Button } from "@/ui/button";
 import { FileUploadInput } from "@/ui/file-upload-input";
 import { DownloadIcon, PackagePlus } from "lucide-react";
+import { useSourceSelector } from "../contexts/source-selector.context";
 
 export default function SourceSelectorCard() {
+  const [context, actions] = useSourceSelector();
+  return (
+    <>
+      {context.test}
+      {context.doubleTest}
+      <button onClick={() => actions.setTest(5)}>Increment Test</button>
+    </>
+  );
   return (
     <Card className="mx-auto w-full">
       <CardHeader>

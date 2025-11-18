@@ -1,8 +1,4 @@
-import {
-  createContext as createReactContext,
-  useContext,
-  useState,
-} from "react";
+import React from "react";
 
 type Selector<TState, TValue> = (state: TState) => TValue;
 
@@ -28,14 +24,14 @@ export function makeContext<
 >(options: MakeContextOptions<TState, TActions>) {
   const { state: initialState, actions, selectors = {} } = options;
 
-  const Context = createReactContext<
+  const Context = React.createContext<
     ContextValue<TState, TSelectors> | undefined
   >(undefined);
 
   const ContextProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
   }) => {
-    const [state, setState] = useState<TState>(initialState);
+    const [state, setState] = React.useState<TState>(initialState);
 
     // Create bound actions
     const boundActions: Record<string, any> = {};
@@ -66,7 +62,7 @@ export function makeContext<
     state: TState & TSelectors,
     actions: Record<string, any>,
   ] => {
-    const context = useContext(Context);
+    const context = React.useContext(Context);
     if (!context) {
       throw new Error("useContext must be used within the ContextProvider");
     }

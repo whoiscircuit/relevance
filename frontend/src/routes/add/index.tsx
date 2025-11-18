@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Container from "@/ui/container";
 import SourceSelectorCard from "@/features/appBuilder/components/source-selector-card";
+import { SourceSelectorProvider } from "@/features/appBuilder/contexts/source-selector.context";
 
 export const Route = createFileRoute("/add/")({
   component: RouteComponent,
@@ -82,7 +83,9 @@ Security scan canceled`,
 function RouteComponent() {
   return (
     <Container>
-      <SourceSelectorCard />
+      <SourceSelectorProvider>
+        <SourceSelectorCard />
+      </SourceSelectorProvider>
     </Container>
   );
 }
