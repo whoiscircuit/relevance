@@ -3,10 +3,14 @@
   "version": "0.0.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*.js"
+  },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup index.ts --format cjs,esm --dts",
-    "dev": "tsup index.ts --format cjs,esm --dts --watch"
+    "build": "tsup src/**/*.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/**/*.ts --format cjs,esm --dts --clean --watch"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
