@@ -1,15 +1,23 @@
 import { makeContext } from "@/lib/makeContext";
+import type { ApkSourceNames } from "@relevance/shared/index";
+
+interface SourceSelectorState {
+  selectedSource?: ApkSourceNames;
+  file?: File;
+}
 
 export const [SourceSelectorProvider, useSourceSelector] = makeContext({
   state: {
-    test: 1,
-  },
+    selectedSource: undefined,
+    file: undefined,
+  } as SourceSelectorState,
   actions: {
-    setTest: (state, increment: number) => ({
-      test: state.test + increment,
-    }),
+    setSelectedSource(state, payload: ApkSourceNames) {
+      return { ...state, selectedSource: payload };
+    },
+    setFile(state, payload: File) {
+      return { ...state, file: payload };
+    },
   },
-  selectors: {
-    doubleTest: (state) => state.test * 2,
-  },
+  debug: true,
 });

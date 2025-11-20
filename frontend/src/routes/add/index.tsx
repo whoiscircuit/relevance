@@ -20,8 +20,9 @@ import {
   PackagePlus,
 } from "lucide-react";
 import Container from "@/ui/container";
-import SourceSelectorCard from "@/features/appBuilder/components/source-selector-card";
+import SourceSelector from "@/features/appBuilder/components/source-selector";
 import { SourceSelectorProvider } from "@/features/appBuilder/contexts/source-selector.context";
+import SourceInputsCard from "@/features/appBuilder/components/source-inputs-card";
 
 export const Route = createFileRoute("/add/")({
   component: RouteComponent,
@@ -84,7 +85,7 @@ function RouteComponent() {
   return (
     <Container>
       <SourceSelectorProvider>
-        <SourceSelectorCard />
+        <SourceInputsCard />
       </SourceSelectorProvider>
     </Container>
   );

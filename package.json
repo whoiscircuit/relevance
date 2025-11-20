@@ -7,7 +7,8 @@
   "scripts": {
     "dev:backend": "npm --workspace=@relevance/backend run start:dev",
     "dev:frontend": "npm --workspace=@relevance/frontend run dev",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+    "dev:shared": "npm --workspace=@relevance/shared run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:shared\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

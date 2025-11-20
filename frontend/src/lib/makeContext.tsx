@@ -1,73 +1,122 @@
-import React from "react";
+import React, { createContext, useContext, useReducer, useMemo } from "react";
+import type { PropsWithChildren, FC } from "react";
 
-type Selector<TState, TValue> = (state: TState) => TValue;
+// --- Helper Types ---
 
-interface MakeContextOptions<TState, TActions extends Record<string, any>> {
-  state: TState;
-  actions: {
-    [K in keyof TActions]: (state: TState, ...args: any[]) => void | TState;
-  };
-  selectors?: {
-    [key: string]: Selector<TState, any>;
-  };
-}
+// Infers the payload type from the action function (2nd argument)
+type Payload<F> = F extends (state: any, payload: infer P) => any ? P : never;
 
-interface ContextValue<TState, TSelectors extends Record<string, any>> {
-  state: TState & TSelectors;
-  actions: Record<string, any>;
-}
+// Maps the original action definitions to functions that only take the payload
+type MappedActions<A> = {
+  [K in keyof A]: (payload: Payload<A[K]>) => void;
+};
+
+// Maps selector functions to their return values
+type MappedSelectors<S, Sel> = {
+  [K in keyof Sel]: Sel[K] extends (state: S) => infer R ? R : never;
+};
+
+// The combined state (Initial State + Calculated Selectors)
+type CombinedState<S, Sel> = S & MappedSelectors<S, Sel>;
+
+// The Return Type of the Hook: [State, Actions]
+type StoreHook<S, A, Sel> = () => [CombinedState<S, Sel>, MappedActions<A>];
+
+// --- The Main Function ---
 
 export function makeContext<
-  TState extends Record<string, any>,
-  TActions extends Record<string, any>,
-  TSelectors extends Record<string, any> = {},
->(options: MakeContextOptions<TState, TActions>) {
-  const { state: initialState, actions, selectors = {} } = options;
+  S,
+  A extends Record<string, (state: S, payload: any) => S>,
+  Sel extends Record<string, (state: S) => any>,
+>(config: {
+  state: S;
+  actions: A;
+  selectors?: Sel;
+  debug?: boolean;
+}): [FC<PropsWithChildren<unknown>>, StoreHook<S, A, Sel>] {
+  const {
+    state: initialState,
+    actions: actionDefs,
+    selectors: selectorDefs = {} as Sel,
+    debug = false,
+  } = config;
 
-  const Context = React.createContext<
-    ContextValue<TState, TSelectors> | undefined
-  >(undefined);
+  // Define the Context Value Type
+  interface ContextValue {
+    state: CombinedState<S, Sel>;
+    actions: MappedActions<A>;
+  }
 
-  const ContextProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-  }) => {
-    const [state, setState] = React.useState<TState>(initialState);
+  const Context = createContext<ContextValue | null>(null);
 
-    // Create bound actions
-    const boundActions: Record<string, any> = {};
-    for (const [key, action] of Object.entries(actions)) {
-      boundActions[key] = (...args: any[]) => {
-        const result = action(state, ...args);
-        if (result !== undefined) {
-          setState(result);
-        }
-      };
+  const reducer = (state: S, action: { type: keyof A; payload: any }): S => {
+    const actionFn = actionDefs[action.type];
+    if (!actionFn) return state;
+
+    if (debug) {
+      console.log(`[Action] ${String(action.type)}`, {
+        payload: action.payload,
+        previousState: state,
+      });
     }
 
-    // Create computed selectors
-    const computedSelectors: TSelectors = {} as TSelectors;
-    for (const [key, selector] of Object.entries(selectors)) {
-      computedSelectors[key as keyof TSelectors] = selector(state);
+    const newState = actionFn(state, action.payload);
+
+    if (debug) {
+      console.log(`[State Updated] ${String(action.type)}`, {
+        newState,
+      });
     }
 
-    const value: ContextValue<TState, TSelectors> = {
-      state: { ...state, ...computedSelectors },
-      actions: boundActions,
-    };
+    return newState;
+  };
+
+  const Provider: FC<PropsWithChildren<unknown>> = ({ children }) => {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    // Memoize Actions
+    const boundActions = useMemo(() => {
+      const actions = {} as MappedActions<A>;
+      (Object.keys(actionDefs) as Array<keyof A>).forEach((key) => {
+        actions[key] = (payload: any) => dispatch({ type: key, payload });
+      });
+      return actions;
+    }, []);
+
+    // Memoize Selectors & Merge with State
+    const derivedState = useMemo(() => {
+      const computed = {} as MappedSelectors<S, Sel>;
+      (Object.keys(selectorDefs) as Array<keyof Sel>).forEach((key) => {
+        computed[key] = selectorDefs[key](state);
+      });
+
+      if (debug && Object.keys(computed).length > 0) {
+        console.log("[Selectors Computed]", computed);
+      }
+
+      return computed;
+    }, [state]);
+
+    const value = useMemo(
+      () => ({
+        state: { ...state, ...derivedState } as CombinedState<S, Sel>,
+        actions: boundActions,
+      }),
+      [state, derivedState, boundActions],
+    );
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
   };
 
-  const useContextHook = (): [
-    state: TState & TSelectors,
-    actions: Record<string, any>,
-  ] => {
-    const context = React.useContext(Context);
+  const useStore: StoreHook<S, A, Sel> = () => {
+    const context = useContext(Context);
     if (!context) {
-      throw new Error("useContext must be used within the ContextProvider");
+      throw new Error(
+        "useStore must be used within the corresponding Context Provider.",
+      );
     }
     return [context.state, context.actions];
   };
 
-  return [ContextProvider, useContextHook] as const;
+  return [Provider, useStore];
 }
