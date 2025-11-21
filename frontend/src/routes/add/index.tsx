@@ -23,6 +23,7 @@ import Container from "@/ui/container";
 import SourceSelector from "@/features/appBuilder/components/source-selector";
 import { SourceSelectorProvider } from "@/features/appBuilder/contexts/source-selector.context";
 import SourceInputsCard from "@/features/appBuilder/components/source-inputs-card";
+import ResigningWarningDialog from "@/features/appBuilder/components/resigning-warning-dialog";
 
 export const Route = createFileRoute("/add/")({
   component: RouteComponent,
@@ -86,6 +87,7 @@ function RouteComponent() {
     <Container>
       <SourceSelectorProvider>
         <SourceInputsCard />
+        <ResigningWarningDialog reason=".xapk and .apks files need to be converted to .apk" />
       </SourceSelectorProvider>
     </Container>
   );

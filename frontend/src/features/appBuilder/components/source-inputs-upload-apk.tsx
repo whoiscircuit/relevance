@@ -2,11 +2,11 @@ import { Button } from "@/ui/button";
 import { Field, FieldLabel } from "@/ui/field";
 import { FileUploadInput } from "@/ui/file-upload-input";
 import { useSourceSelector } from "../contexts/source-selector.context";
-import useComputeHashAndRedirect from "../hooks/useComputeHashAndRedirect";
+import useComputeHashAndRedirect from "../hooks/usePreUpload";
 
 export default function SourceInputsUploadApk() {
   const [context, actions] = useSourceSelector();
-  const { handleCompute, isLoading, error } = useComputeHashAndRedirect();
+  const { handlePreUpload, isLoading, error } = useComputeHashAndRedirect();
   return (
     <>
       <Field>
@@ -18,7 +18,6 @@ export default function SourceInputsUploadApk() {
           onChange={(file) => actions.setFile(file[0])}
         />
       </Field>
-      {error && <}
       <Button
         className="w-full mt-10"
         onClick={handleCompute}

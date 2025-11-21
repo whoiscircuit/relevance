@@ -63,9 +63,7 @@ export function makeContext<
     const newState = actionFn(state, action.payload);
 
     if (debug) {
-      console.log(`[State Updated] ${String(action.type)}`, {
-        newState,
-      });
+      console.log(`[State Updated] ${String(action.type)}`, newState);
     }
 
     return newState;
