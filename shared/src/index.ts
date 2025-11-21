@@ -22,3 +22,28 @@ export const apkSources = [
 ] as const;
 
 export type ApkSourceNames = typeof apkSources[number]["value"];
+
+export type AppBuilderFileType = "apk" | "xapk" | "apks";
+
+export type StepStatus =
+  | "success"
+  | "error"
+  | "warning"
+  | "cancelled"
+  | "running"
+  | "waiting";
+
+export type AppBuilderStep = {
+  progress: number;
+  status: StepStatus;
+  title: string;
+  name: string;
+  description: string;
+  error?: string;
+};
+
+export type AppBuilderConnectionState = {
+  title: string;
+  steps: AppBuilderStep[];
+  log?: string;
+};

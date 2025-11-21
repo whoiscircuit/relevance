@@ -2,14 +2,22 @@ import { Button } from "@/ui/button";
 import { Field, FieldLabel } from "@/ui/field";
 import { FileUploadInput } from "@/ui/file-upload-input";
 import { useSourceSelector } from "../contexts/source-selector.context";
-import useComputeHashAndRedirect from "../hooks/usePreUpload";
+import usePreUpload from "../hooks/usePreUpload";
+import { Alert, AlertTitle } from "@/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 export default function SourceInputsUploadApk() {
   const [context, actions] = useSourceSelector();
-  const { handlePreUpload, isLoading, error } = useComputeHashAndRedirect();
+  const { handlePreUpload, isLoading, error } = usePreUpload();
   return (
     <>
       <Field>
+        {error && (
+          <Alert variant="destructive" className="my-5">
+            <AlertTitle><AlertCircleIcon />Something went wrong!</AlertTitle>
+            {error}
+          </Alert>
+        )}
         <FieldLabel>Upload Your APK File</FieldLabel>
         <FileUploadInput
           accepts=".apk,.xapk,.apks"
@@ -20,8 +28,8 @@ export default function SourceInputsUploadApk() {
       </Field>
       <Button
         className="w-full mt-10"
-        onClick={handleCompute}
-        disabled={isLoading}
+        onClick={handlePreUpload}
+        disabled={isLoading || !context.file}
       >
         Upload
       </Button>

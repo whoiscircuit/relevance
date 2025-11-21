@@ -15,23 +15,10 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/ui/accordion";
-import {
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  Minus,
-  Loader,
-} from "lucide-react";
+import { CheckCircle2, AlertCircle, XCircle, Minus, Loader, CircleXIcon } from "lucide-react";
+import type { AppBuilderStep, AppBuilderConnectionState, StepStatus } from "@relevance/shared";
 
-interface ReportStep {
-  name: string;
-  title: string;
-  status: "success" | "warning" | "error" | "canceled" | "running";
-  progress?: number;
-  logs?: string;
-}
-
-function getStatusIcon(status: string) {
+function getStatusIcon(status: StepStatus) {
   switch (status) {
     case "success":
       return <CheckCircle2 className="h-5 w-5 text-green-500" />;
@@ -39,16 +26,18 @@ function getStatusIcon(status: string) {
       return <AlertCircle className="h-5 w-5 text-yellow-500" />;
     case "error":
       return <XCircle className="h-5 w-5 text-red-500" />;
-    case "canceled":
-      return <Minus className="h-5 w-5 text-gray-400" />;
+    case "cancelled":
+      return <CircleXIcon className="h-5 w-5 text-gray-400"/>
     case "running":
       return <Loader className="h-5 w-5 text-blue-500 animate-spin" />;
+    case "waiting":
+      return <Minus className="h-5 w-5 text-gray-400" />;
     default:
       return null;
   }
 }
 
-function getProgressBarColor(status: string): string {
+function getProgressBarColor(status: StepStatus): string {
   switch (status) {
     case "success":
       return "bg-green-500";
@@ -56,40 +45,23 @@ function getProgressBarColor(status: string): string {
       return "bg-yellow-500";
     case "error":
       return "bg-red-500";
-    case "canceled":
+    case "cancelled":
       return "bg-gray-400";
-    case "running":
+    case "waiting":
       return "bg-blue-500";
     default:
       return "bg-blue-500";
   }
 }
 
-function ReportStep({ step }: { step: ReportStep }) {
-  const [currentProgress, setCurrentProgress] = useState(step.progress ?? 0);
+function ReportStep({ step }: { step: AppBuilderStep }) {
+  const [currentProgress, setCurrentProgress] = useState(step.progress);
 
-  // Simulate progress updates for running steps
   useEffect(() => {
-    if (step.status !== "running") {
-      setCurrentProgress(step.progress ?? 0);
-      return;
-    }
+    setCurrentProgress(step.progress);
+  }, [step.progress]);
 
-    const interval = setInterval(() => {
-      setCurrentProgress((prev) => {
-        const increment = Math.random() * 15;
-        const newProgress = Math.min(prev + increment, 95);
-        return newProgress;
-      });
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [step.status, step.progress]);
-
-  const statusLabel =
-    step.status === "running"
-      ? "Running"
-      : `${Math.round(currentProgress)}% complete`;
+  const statusLabel = step.status === "waiting" ? "Waiting" : `${Math.round(currentProgress)}% complete`;
 
   return (
     <AccordionItem
@@ -110,7 +82,7 @@ function ReportStep({ step }: { step: ReportStep }) {
             </div>
 
             {/* Progress Bar */}
-            {step.progress !== undefined && (
+            {typeof step.progress === "number" && (
               <div className="mt-2">
                 <Progress
                   value={currentProgress}
@@ -120,7 +92,7 @@ function ReportStep({ step }: { step: ReportStep }) {
               </div>
             )}
 
-            {step.progress !== undefined && (
+            {typeof step.progress === "number" && (
               <p className="text-xs text-muted-foreground mt-1 animate-in fade-in duration-500 delay-100">
                 {statusLabel}
               </p>
@@ -129,48 +101,39 @@ function ReportStep({ step }: { step: ReportStep }) {
         </div>
       </AccordionTrigger>
 
-      {/* Accordion Body */}
-      {step.logs && (
-        <AccordionContent className="px-6 pb-4 bg-secondary/50">
-          <div className="bg-background rounded-lg border border-secondary p-3">
-            <pre className="text-xs text-foreground font-mono overflow-x-auto whitespace-pre-wrap wrap-break-words">
-              {step.logs}
-            </pre>
-          </div>
-        </AccordionContent>
-      )}
+      <AccordionContent className="px-6 pb-4 bg-secondary/50">
+        <div className="text-xs text-muted-foreground">{step.description}</div>
+      </AccordionContent>
     </AccordionItem>
   );
 }
 
-interface ReportCardProps {
-  title: string;
-  steps: ReportStep[];
-  description?: string;
-}
-
-export default function ReportCard({
-  title,
-  steps,
-  description,
-}: ReportCardProps) {
+export default function ReportCard({ state }: { state: AppBuilderConnectionState }) {
   return (
     <Card className="w-full max-w-3xl">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
+        <CardTitle>{state.title}</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <Accordion
           type="single"
           collapsible
           className="w-full"
-          defaultValue={steps.find((step) => step.status === "running")?.name}
+          defaultValue={state.steps.find((step) => step.status === "waiting")?.name}
         >
-          {steps.map((step) => (
+          {state.steps.map((step) => (
             <ReportStep key={step.name} step={step} />
           ))}
         </Accordion>
+        {state.log && (
+          <div className="px-6 pb-4">
+            <div className="bg-background rounded-lg border border-secondary p-3">
+              <pre className="text-xs text-foreground font-mono overflow-x-auto whitespace-pre-wrap wrap-break-words">
+                {state.log}
+              </pre>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

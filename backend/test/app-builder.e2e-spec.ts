@@ -4,7 +4,7 @@ import request from "supertest";
 import { App } from "supertest/types";
 import { AppModule } from "./../src/app.module";
 
-describe("AppController (e2e)", () => {
+describe("AppBuilderController (e2e)", () => {
   let app: INestApplication<App>;
 
   beforeEach(async () => {
@@ -17,10 +17,12 @@ describe("AppController (e2e)", () => {
     await app.init();
   });
 
-  it("/api (GET)", () => {
-    return request(app.getHttpServer())
-      .get("/api")
-      .expect(200)
-      .expect("Hello World!");
+  it("/api/app-builder/pre-upload (POST)", async () => {
+    const res = await request(app.getHttpServer())
+      .post("/api/app-builder/pre-upload")
+      .send({ hash: "abc123", filetype: "apk" })
+      .expect(200);
+    expect(res.body.connectionId).toBeDefined();
+    expect(typeof res.body.connectionId).toBe("string");
   });
 });

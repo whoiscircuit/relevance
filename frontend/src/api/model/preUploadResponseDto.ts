@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 
-export * from './preUploadDto';
-export * from './preUploadDtoFiletype';
-export * from './preUploadResponseDto';
+export interface PreUploadResponseDto {
+  /** Allocated WebSocket connection identifier */
+  connectionId: string;
+}
