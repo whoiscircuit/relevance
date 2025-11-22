@@ -3,7 +3,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ConfigModule } from "@nestjs/config";
 import { DrizzleModule } from "./database/drizzle.module";
-import { AppBuilderModule } from "./app-builder/app-builder.module";
+import { AppBuilderModule } from "./features/appBuilder/app-builder.module";
 
 @Module({
   imports: [

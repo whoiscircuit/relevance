@@ -1,4 +1,4 @@
-import { Inject, Logger, forwardRef } from "@nestjs/common";
+import { BadRequestException, Inject, Logger, forwardRef } from "@nestjs/common";
 import { OnGatewayConnection, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import type { Server, Socket } from "socket.io";
 import { AppBuilderService } from "./app-builder.service";
@@ -16,25 +16,23 @@ export class AppBuilderGateway implements OnGatewayConnection {
 
   async handleConnection(client: Socket) {
     const query = client.handshake.query as Record<string, string | string[]>;
-    const raw = query["connectionId"] as string | string[] | undefined;
-    const connectionId =
-      typeof raw === "string" ? raw : Array.isArray(raw) ? raw[0] : undefined;
-    if (!connectionId) {
+    const connectionId = query["connectionId"] as string | string[] | undefined;
+    if(typeof connectionId !== "string"){
       this.logger.warn(
         "Missing connectionId in handshake, disconnecting client",
       );
       client.disconnect(true);
+      throw new BadRequestException("Missing connectionId in handshake");
       return;
     }
-    const record = this.service.get(connectionId);
-    if (!record) {
+    const attachResult = this.service.attachSocket(connectionId, client.id);
+    if (!attachResult) {
       this.logger.warn(
         `Unknown connectionId ${connectionId}, disconnecting client`,
       );
       client.disconnect(true);
       return;
     }
-    this.service.attachSocket(connectionId, client.id);
     await client.join(connectionId);
     client.emit("connected", { connectionId });
     client.on("get_state", () => {

@@ -61,7 +61,7 @@ export default function usePreFetch() {
         name: context.file.name,
         uploadedAt: new Date().toISOString(),
       });
-      await set(`current-file-hash`, hash);
+      await set("current-file-hash", hash);
 
       // Send to server
       if (!context.selectedSource) {
