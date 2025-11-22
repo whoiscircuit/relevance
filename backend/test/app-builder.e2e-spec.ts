@@ -17,10 +17,10 @@ describe("AppBuilderController (e2e)", () => {
     await app.init();
   });
 
-  it("/api/app-builder/pre-upload (POST)", async () => {
+  it("/api/app-builder/pre-fetch (POST)", async () => {
     const res = await request(app.getHttpServer())
-      .post("/api/app-builder/pre-upload")
-      .send({ hash: "abc123", filetype: "apk" })
+      .post("/api/app-builder/pre-fetch")
+      .send({ type: "upload-apk", body: { hash: "a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5a3f5", filetype: "apk" } })
       .expect(200);
     expect(res.body.connectionId).toBeDefined();
     expect(typeof res.body.connectionId).toBe("string");

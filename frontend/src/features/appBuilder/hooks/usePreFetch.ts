@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useAppBuilderControllerPreUpload } from "@/api/endpoints/app-builder/app-builder";
+import { useAppBuilderControllerPreFetch } from "@/api/endpoints/app-builder/app-builder";
 import { set } from "idb-keyval";
 import { useSourceSelector } from "../contexts/source-selector.context";
 import type { AppBuilderFileType } from "@relevance/shared";
@@ -12,13 +12,13 @@ async function computeFileHash(file: File): Promise<string> {
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function preUpload(hash: string, filetype: AppBuilderFileType) {
-  const response = await fetch("/app-builder/pre-upload", {
+async function preFetch(hash: string, filetype: AppBuilderFileType, type: string) {
+  const response = await fetch("/app-builder/pre-fetch", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ hash, filetype }),
+    body: JSON.stringify({ hash, filetype, type }),
   });
 
   if (!response.ok) {
@@ -28,17 +28,17 @@ async function preUpload(hash: string, filetype: AppBuilderFileType) {
   return (await response.json()) as { connectionId: string };
 }
 
-export default function usePreUpload() {
+export default function usePreFetch() {
   const [context] = useSourceSelector();
   const navigate = useNavigate();
 
-  const mutation = useAppBuilderControllerPreUpload({
+  const mutation = useAppBuilderControllerPreFetch({
     mutation: {
-      mutationKey: ["pre-upload"],
+      mutationKey: ["pre-fetch"],
     },
   });
 
-  const handlePreUpload = useCallback(async () => {
+  const handlePreFetch = useCallback(async () => {
     try {
       if (!context.file) {
         throw new Error("No file selected");
@@ -61,20 +61,25 @@ export default function usePreUpload() {
         name: context.file.name,
         uploadedAt: new Date().toISOString(),
       });
+      await set(`current-file-hash`, hash);
 
       // Send to server
-      const res = await mutation.mutateAsync({ data: { hash, filetype } });
+      if (!context.selectedSource) {
+        throw new Error("No APK source selected");
+      }
+
+      const res = await mutation.mutateAsync({ data: { type: context.selectedSource, body: { hash, filetype } } });
       const { connectionId } = res.data;
 
       // Route to report page
-      await navigate({ to: `/add/${connectionId}` });
+      await navigate({ to: `/add/upload/${connectionId}` });
     } catch (error) {
       console.error("Upload error:", error);
     }
-  }, [context.file, navigate, mutation]);
+  }, [context.file, context.selectedSource, navigate, mutation]);
 
   return {
-    handlePreUpload,
+    handlePreFetch,
     isLoading: mutation.isPending,
     error: (mutation.error as Error | undefined)?.message || null,
   };

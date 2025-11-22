@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AddIndexRouteImport } from './routes/add/index'
-import { Route as AddConnectionIdRouteImport } from './routes/add/$connectionId'
+import { Route as AddUploadConnectionIdRouteImport } from './routes/add/upload.$connectionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,40 +23,40 @@ const AddIndexRoute = AddIndexRouteImport.update({
   path: '/add/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AddConnectionIdRoute = AddConnectionIdRouteImport.update({
-  id: '/add/$connectionId',
-  path: '/add/$connectionId',
+const AddUploadConnectionIdRoute = AddUploadConnectionIdRouteImport.update({
+  id: '/add/upload/$connectionId',
+  path: '/add/upload/$connectionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/add/$connectionId': typeof AddConnectionIdRoute
   '/add': typeof AddIndexRoute
+  '/add/upload/$connectionId': typeof AddUploadConnectionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/add/$connectionId': typeof AddConnectionIdRoute
   '/add': typeof AddIndexRoute
+  '/add/upload/$connectionId': typeof AddUploadConnectionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/add/$connectionId': typeof AddConnectionIdRoute
   '/add/': typeof AddIndexRoute
+  '/add/upload/$connectionId': typeof AddUploadConnectionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/add/$connectionId' | '/add'
+  fullPaths: '/' | '/add' | '/add/upload/$connectionId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/add/$connectionId' | '/add'
-  id: '__root__' | '/' | '/add/$connectionId' | '/add/'
+  to: '/' | '/add' | '/add/upload/$connectionId'
+  id: '__root__' | '/' | '/add/' | '/add/upload/$connectionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AddConnectionIdRoute: typeof AddConnectionIdRoute
   AddIndexRoute: typeof AddIndexRoute
+  AddUploadConnectionIdRoute: typeof AddUploadConnectionIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,11 +75,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AddIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/add/$connectionId': {
-      id: '/add/$connectionId'
-      path: '/add/$connectionId'
-      fullPath: '/add/$connectionId'
-      preLoaderRoute: typeof AddConnectionIdRouteImport
+    '/add/upload/$connectionId': {
+      id: '/add/upload/$connectionId'
+      path: '/add/upload/$connectionId'
+      fullPath: '/add/upload/$connectionId'
+      preLoaderRoute: typeof AddUploadConnectionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -87,8 +87,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AddConnectionIdRoute: AddConnectionIdRoute,
   AddIndexRoute: AddIndexRoute,
+  AddUploadConnectionIdRoute: AddUploadConnectionIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

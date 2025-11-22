@@ -16,8 +16,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  PreUploadDto,
-  PreUploadResponseDto
+  PreFetchDto,
+  PreFetchResponseDto
 } from '../../model';
 
 import { customInstance } from '../../../lib/axios';
@@ -28,49 +28,49 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
- * Accepts hash and filetype, allocates a server-side session and returns connectionId.
- * @summary Prepare for upload and allocate a WebSocket connectionId
+ * Accepts hash, filetype and source type, allocates a server-side session and returns connectionId.
+ * @summary Prepare for fetching and allocate a WebSocket connectionId
  */
-export type appBuilderControllerPreUploadResponse200 = {
-  data: PreUploadResponseDto
+export type appBuilderControllerPreFetchResponse200 = {
+  data: PreFetchResponseDto
   status: 200
 }
     
-export type appBuilderControllerPreUploadResponseSuccess = (appBuilderControllerPreUploadResponse200) & {
+export type appBuilderControllerPreFetchResponseSuccess = (appBuilderControllerPreFetchResponse200) & {
   headers: Headers;
 };
 ;
 
-export type appBuilderControllerPreUploadResponse = (appBuilderControllerPreUploadResponseSuccess)
+export type appBuilderControllerPreFetchResponse = (appBuilderControllerPreFetchResponseSuccess)
 
-export const getAppBuilderControllerPreUploadUrl = () => {
+export const getAppBuilderControllerPreFetchUrl = () => {
 
 
   
 
-  return `/app-builder/pre-upload`
+  return `/app-builder/pre-fetch`
 }
 
-export const appBuilderControllerPreUpload = async (preUploadDto: PreUploadDto, options?: RequestInit): Promise<appBuilderControllerPreUploadResponse> => {
+export const appBuilderControllerPreFetch = async (preFetchDto: PreFetchDto, options?: RequestInit): Promise<appBuilderControllerPreFetchResponse> => {
   
-  return customInstance<appBuilderControllerPreUploadResponse>(getAppBuilderControllerPreUploadUrl(),
+  return customInstance<appBuilderControllerPreFetchResponse>(getAppBuilderControllerPreFetchUrl(),
   {      
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(
-      preUploadDto,)
+      preFetchDto,)
   }
 );}
 
 
 
 
-export const getAppBuilderControllerPreUploadMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof appBuilderControllerPreUpload>>, TError,{data: PreUploadDto}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof appBuilderControllerPreUpload>>, TError,{data: PreUploadDto}, TContext> => {
+export const getAppBuilderControllerPreFetchMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof appBuilderControllerPreFetch>>, TError,{data: PreFetchDto}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof appBuilderControllerPreFetch>>, TError,{data: PreFetchDto}, TContext> => {
 
-const mutationKey = ['appBuilderControllerPreUpload'];
+const mutationKey = ['appBuilderControllerPreFetch'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -80,10 +80,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof appBuilderControllerPreUpload>>, {data: PreUploadDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof appBuilderControllerPreFetch>>, {data: PreFetchDto}> = (props) => {
           const {data} = props ?? {};
 
-          return  appBuilderControllerPreUpload(data,requestOptions)
+          return  appBuilderControllerPreFetch(data,requestOptions)
         }
 
         
@@ -91,23 +91,23 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type AppBuilderControllerPreUploadMutationResult = NonNullable<Awaited<ReturnType<typeof appBuilderControllerPreUpload>>>
-    export type AppBuilderControllerPreUploadMutationBody = PreUploadDto
-    export type AppBuilderControllerPreUploadMutationError = unknown
+    export type AppBuilderControllerPreFetchMutationResult = NonNullable<Awaited<ReturnType<typeof appBuilderControllerPreFetch>>>
+    export type AppBuilderControllerPreFetchMutationBody = PreFetchDto
+    export type AppBuilderControllerPreFetchMutationError = unknown
 
     /**
- * @summary Prepare for upload and allocate a WebSocket connectionId
+ * @summary Prepare for fetching and allocate a WebSocket connectionId
  */
-export const useAppBuilderControllerPreUpload = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof appBuilderControllerPreUpload>>, TError,{data: PreUploadDto}, TContext>, request?: SecondParameter<typeof customInstance>}
+export const useAppBuilderControllerPreFetch = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof appBuilderControllerPreFetch>>, TError,{data: PreFetchDto}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof appBuilderControllerPreUpload>>,
+        Awaited<ReturnType<typeof appBuilderControllerPreFetch>>,
         TError,
-        {data: PreUploadDto},
+        {data: PreFetchDto},
         TContext
       > => {
 
-      const mutationOptions = getAppBuilderControllerPreUploadMutationOptions(options);
+      const mutationOptions = getAppBuilderControllerPreFetchMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
